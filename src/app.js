@@ -13,6 +13,7 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 
 const logger = require('./utils/logger');
+const connectDB = require('../config/database');
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const { authLimiter, publicLimiter } = require('./middlewares/rateLimiter');
 
@@ -74,7 +75,6 @@ const analyticsRoutes    = require('./routes/analytics.routes');
 const mediaRoutes        = require('./routes/media.routes');
 const healthRoutes       = require('./routes/health.routes');
 const adminRoutes        = require('./routes/admin.routes');
-// ─── NEW: Advanced Features ────────────────────────────────────────────────
 const discussionRoutes   = require('./routes/discussion.routes');
 const gamificationRoutes = require('./routes/gamification.routes');
 const personalizationRoutes = require('./routes/personalization.routes');
@@ -209,20 +209,14 @@ app.use(errorHandler);
 // ─── Database + Server Start ──────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    logger.info('✅ MongoDB connected');
-    server.listen(PORT, () => {
-      logger.info(`🚀 LMS API running → http://localhost:${PORT}`);
-      logger.info(`📚 API Docs      → http://localhost:${PORT}/api/docs`);
-      logger.info(`❤️  Health check  → http://localhost:${PORT}/api/v1/health`);
-      logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    });
-  })
-  .catch((err) => {
-    logger.error('❌ MongoDB connection failed:', err.message);
-    process.exit(1);
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    logger.info(`🚀 LMS API running → http://localhost:${PORT}`);
+    logger.info(`📚 API Docs      → http://localhost:${PORT}/api/docs`);
+    logger.info(`❤️  Health check  → http://localhost:${PORT}/api/v1/health`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   });
+});
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
