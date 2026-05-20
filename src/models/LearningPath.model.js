@@ -1,27 +1,25 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const learningPathSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, 'Learning path title is required'],
-      maxlength: [200, 'Title cannot exceed 200 characters'],
+      required: [true, "Learning path title is required"],
+      maxlength: [200, "Title cannot exceed 200 characters"],
     },
     description: {
       type: String,
-      maxlength: [1000, 'Description cannot exceed 1000 characters'],
+      maxlength: [1000, "Description cannot exceed 1000 characters"],
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
-      index: true,
     },
     pathType: {
       type: String,
-      enum: ['system-recommended', 'instructor-curated', 'user-custom'],
-      default: 'user-custom',
-      index: true,
+      enum: ["system-recommended", "instructor-curated", "user-custom"],
+      default: "user-custom",
     },
     targetAudience: String,
     courses: [
@@ -36,8 +34,8 @@ const learningPathSchema = new mongoose.Schema(
     estimatedTotalHours: { type: Number },
     difficulty: {
       type: String,
-      enum: ['beginner', 'intermediate', 'advanced', 'expert'],
-      default: 'beginner',
+      enum: ["beginner", "intermediate", "advanced", "expert"],
+      default: "beginner",
     },
     isPublic: { type: Boolean, default: true },
     enrolledUsers: [
@@ -54,11 +52,11 @@ const learningPathSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 learningPathSchema.index({ creator: 1 });
 learningPathSchema.index({ pathType: 1 });
 learningPathSchema.index({ isPublic: 1 });
 
-module.exports = mongoose.model('LearningPath', learningPathSchema);
+module.exports = mongoose.model("LearningPath", learningPathSchema);
